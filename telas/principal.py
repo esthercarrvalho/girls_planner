@@ -1,10 +1,12 @@
 import tkinter as tk
 from tkinter import messagebox
 
+from telas.atividades import TelaAtividades
+from telas.cadastro import TelaCadastro
+
 
 class TelaPrincipal:
 
-    # Cores do Girls Planner
     ROSA_CLARO = "#FCE4EC"
     ROSA = "#E8A8C7"
     ROSA_ESCURO = "#C76B9B"
@@ -22,15 +24,13 @@ class TelaPrincipal:
         self.janela.resizable(False, False)
         self.janela.configure(bg=self.ROSA_CLARO)
 
+        self.atividades = []
+
         self.criar_widgets()
 
         self.janela.mainloop()
 
     def criar_widgets(self):
-
-        # =========================
-        # CABEÇALHO
-        # =========================
 
         tk.Label(
             self.janela,
@@ -56,10 +56,6 @@ class TelaPrincipal:
             fg=self.TEXTO
         ).pack(pady=(5, 25))
 
-        # =========================
-        # ÁREA DOS BOTÕES
-        # =========================
-
         quadro = tk.Frame(
             self.janela,
             bg=self.BRANCO,
@@ -72,7 +68,6 @@ class TelaPrincipal:
             fill="x"
         )
 
-        # Título da área
         tk.Label(
             quadro,
             text="O que você deseja fazer?",
@@ -80,10 +75,6 @@ class TelaPrincipal:
             bg=self.BRANCO,
             fg=self.TEXTO
         ).pack(pady=(0, 20))
-
-        # =========================
-        # ATIVIDADES
-        # =========================
 
         tk.Button(
             quadro,
@@ -102,10 +93,6 @@ class TelaPrincipal:
             pady=7
         )
 
-        # =========================
-        # RESUMO
-        # =========================
-
         tk.Button(
             quadro,
             text="📊  Meu resumo",
@@ -123,10 +110,6 @@ class TelaPrincipal:
             pady=7
         )
 
-        # =========================
-        # SAIR
-        # =========================
-
         tk.Button(
             quadro,
             text="🚪  Sair",
@@ -141,7 +124,6 @@ class TelaPrincipal:
             pady=(15, 0)
         )
 
-        # Rodapé
         tk.Label(
             self.janela,
             text="Planeje ✦ Organize ✦ Realize",
@@ -152,16 +134,45 @@ class TelaPrincipal:
 
     def abrir_atividades(self):
 
-        messagebox.showinfo(
-            "Minhas atividades 📝",
-            "A tela de atividades será conectada aqui!"
+        tela = TelaAtividades(
+            self.janela,
+            self.atividades
+        )
+
+        tk.Button(
+            tela.janela,
+            text="+ Nova atividade",
+            font=("Arial", 10, "bold"),
+            bg=self.ROSA_ESCURO,
+            fg=self.BRANCO,
+            activebackground=self.ROSA_MUITO_ESCURO,
+            activeforeground=self.BRANCO,
+            relief="flat",
+            cursor="hand2",
+            command=lambda: self.abrir_cadastro(tela)
+        ).pack(pady=5)
+
+    def abrir_cadastro(self, tela_atividades):
+
+        TelaCadastro(
+            tela_atividades.janela,
+            self.atividades
         )
 
     def abrir_resumo(self):
 
+        total = len(self.atividades)
+        concluidas = sum(
+            1 for atividade in self.atividades
+            if atividade.concluida
+        )
+        pendentes = total - concluidas
+
         messagebox.showinfo(
             "Meu resumo 📊",
-            "O resumo será conectado aqui!"
+            f"Total: {total}\n"
+            f"Concluídas: {concluidas}\n"
+            f"Pendentes: {pendentes}"
         )
 
     def sair(self):
